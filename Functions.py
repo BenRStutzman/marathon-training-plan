@@ -109,23 +109,28 @@ def split_week(days, total_mileage):
     return mileage
 
 def build_plan(days_first_week, days_last_week, num_weeks, weekly_mileage):
-    plan = {}
-    start = 1
-    end = num_weeks
+    plan = []
     if days_first_week:
-        plan[1] = split_week(days_first_week,
-                               round(weekly_mileage * (days_first_week / 7)))
-        start += 1
-    for week in range(start, end):
-        plan[week] = split_week(7, weekly_mileage)
+        plan.append(split_week(days_first_week,
+                               round(weekly_mileage * (days_first_week / 7))))
+        num_weeks -= 1
+    for week in range(num_weeks - 1):
+        plan.append(split_week(7, weekly_mileage))
     if days_last_week == 0:
-        plan[num_weeks] = split_week(6, weekly_mileage - 26).append(26.2)
+        plan.append(split_week(6, weekly_mileage - 26) + [26.2])
     elif days_last_week > 1:
-        plan[num_weeks] = split_week(days_last_week - 1, round((weekly_mileage
-                                - 26) * ((days_last_week - 1) / 7))).append(26.2)
+        plan.append(split_week(days_last_week - 1, round((weekly_mileage - 26)
+                    * ((days_last_week - 1) / 7))) + [26.2])
     else:
-        plan[num_weeks] = [26.2]
+        plan.append([26.2])
     return plan
+
+'''
+def write_plan(plan, start_date):
+    for i in range
+        for day in week:
+'''
+            
 
 if __name__ == '__main__':
     print("This file contains the functions for "
