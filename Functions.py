@@ -70,6 +70,17 @@ def get_start_date(today, race_date):
     else:
         raise QuitError
 
+def get_mileage(min_mileage):
+    question = "How many miles would you like to run per week?"
+    while True:
+        answer = e.integerbox(question)
+        if answer == None:
+            raise QuitError
+        elif answer >= min_mileage:
+            return answer
+        else:
+            e.msgbox("You must run at least %d miles per week." % min_mileage)
+
 def calc_weeks(start_date, race_date):
     race_day = race_date.weekday()
     start_day = start_date.weekday()
@@ -88,21 +99,33 @@ def calc_weeks(start_date, race_date):
         num_weeks += 1
     return (days_first_week, days_last_week, num_weeks)
 
-def get_mileage(min_mileage):
-    question = "How many miles would you like to run per week?"
-    while True:
-        answer = e.integerbox(question)
-        if answer == None:
-            raise QuitError
-        elif answer >= min_mileage:
-            return answer
-        else:
-            e.msgbox("You must run at least %d miles per week." % min_mileage)
 
 def split_week(days, total_mileage):
     proportions = [randint(1,100) for i in range(days)]
     multiplier = total_mileage / sum(proportions)
-    return [round(i * multiplier) for i in proportions]
+    mileage = [round(i * multiplier) for i in proportions]
+    diff = total_mileage - sum(mileage)
+    mileage[0] += diff
+    return mileage
+
+def build_plan(days_first_week, days_last_week, num_weeks, weekly_mileage):
+    plan = {}
+    start = 1
+    end = num_weeks
+    if days_first_week:
+        plan[1] = split_week(days_first_week,
+                               round(weekly_mileage * (days_first_week / 7)))
+        start += 1
+    for week in range(start, end):
+        plan[week] = split_week(7, weekly_mileage)
+    if days_last_week == 0:
+        plan[num_weeks] = split_week(6, weekly_mileage - 26).append(26.2)
+    elif days_last_week > 1:
+        plan[num_weeks] = split_week(days_last_week - 1, round((weekly_mileage
+                                - 26) * ((days_last_week - 1) / 7))).append(26.2)
+    else:
+        plan[num_weeks] = [26.2]
+    return plan
 
 if __name__ == '__main__':
     print("This file contains the functions for "
