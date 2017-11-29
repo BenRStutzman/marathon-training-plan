@@ -89,7 +89,7 @@ def get_mileage(prompt, time_frame, min_mileage):
             
 def calc_weekly_mileage(num_weeks):
     initial_mileage = get_mileage("Initial miles per week?", "to start", 5)
-    final_mileage = get_mileage("Final miles per week?", "by the end", 26)
+    final_mileage = get_mileage("Final miles per week?", "by the end", 30)
     return [round(initial_mileage + (i/num_weeks) * (final_mileage
                         -initial_mileage)) for i in range(1, num_weeks + 1)]
 
@@ -109,7 +109,7 @@ def calc_weeks(start_date, race_date):
         num_weeks += 1
     if days_last_week:
         num_weeks += 1
-    return (days_first_week, days_last_week, num_weeks)
+    return (days_first_week, days_last_week, num_weeks, num_days)
 
 
 def split_week(days, total_mileage):
@@ -155,8 +155,30 @@ def build_plan(days_first_week, days_last_week, num_weeks, weekly_mileage):
         plan.append([26.2])
     return plan
 
-def add_taper(plan):
-    print('FIXME: define taper function')
+def add_taper(plan, num_days):
+    taper_vals = [7,5,3]
+    if num_days >= 2:
+        if len(plan[-1]) >= 2:
+            plan[-1][-2] = taper_vals[-1]
+        else:
+            plan[-2][-1] = taper_vals[-1]
+    if num_days >= 3:
+        if len(plan[-1]) >= 3:
+            plan[-1][-3] = taper_vals[-2]
+        elif len(plan[-1]) == 2:
+            plan[-2][-1] = taper_vals[-2]
+        else:
+            plan[-2][-2] = taper_vals[-2]
+    if num_days >= 4:
+        if len(plan[-1]) >= 4:
+            plan[-1][-4] = taper_vals[-3]
+        elif len(plan[-1]) == 3:
+            plan[-2][-1] = taper_vals[-3]
+        elif len(plan[-1]) == 2:
+            plan[-2][-2] = taper_vals[-3]
+        else:
+            plan[-2][-3] = taper_vals[-3]
+    return plan
 
 def write_plan(plan, start_date):
     text = 'Marathon Training Plan'
