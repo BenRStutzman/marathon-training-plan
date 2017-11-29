@@ -5,6 +5,12 @@ import calendar as c
 import datetime as d
 import easygui as e
 from random import randint
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from email.mime.base import MIMEBase
+from email import encoders
+
+import smtplib
 
 class QuitError(Exception):
     """ An error to be raised if the user selects 'cancel' in any input box. """
@@ -70,16 +76,22 @@ def get_start_date(today, race_date):
     else:
         raise QuitError
 
-def get_mileage(min_mileage):
-    question = "How many miles would you like to run per week?"
+def get_mileage(prompt, time_frame, min_mileage):
     while True:
-        answer = e.integerbox(question)
+        answer = e.integerbox(prompt)
         if answer == None:
             raise QuitError
         elif answer >= min_mileage:
             return answer
         else:
-            e.msgbox("You must run at least %d miles per week." % min_mileage)
+            e.msgbox("You must run at least %d miles per week %s."
+                     % (min_mileage, time_frame))
+            
+def calc_weekly_mileage(num_weeks):
+    initial_mileage = get_mileage("Initial miles per week?", "to start", 5)
+    final_mileage = get_mileage("Final miles per week?", "by the end", 26)
+    return [round(initial_mileage + (i/num_weeks) * (final_mileage
+                        -initial_mileage)) for i in range(1, num_weeks + 1)]
 
 def calc_weeks(start_date, race_date):
     race_day = race_date.weekday()
@@ -105,32 +117,120 @@ def split_week(days, total_mileage):
     multiplier = total_mileage / sum(proportions)
     mileage = [round(i * multiplier) for i in proportions]
     diff = total_mileage - sum(mileage)
-    mileage[0] += diff
+    if mileage[0] > - diff:
+        mileage[0] += diff
+    else:
+        mileage[0] = 0
     return mileage
 
 def build_plan(days_first_week, days_last_week, num_weeks, weekly_mileage):
     plan = []
+    if num_weeks == 1:
+        if days_first_week == 1:
+            plan.append([26.2])
+        else:
+            total_miles = round(weekly_mileage[0] * (days_first_week / 7))
+            if total_miles <= 26:
+                plan.append(split_week(days_first_week - 1, 0) + [26.2])
+            else:
+                plan.append(split_week(days_first_week - 1, total_miles - 26)
+                            + [26.2])
+        return plan
     if days_first_week:
         plan.append(split_week(days_first_week,
-                               round(weekly_mileage * (days_first_week / 7))))
+                               round(weekly_mileage[0] * (days_first_week / 7))))
         num_weeks -= 1
     for week in range(num_weeks - 1):
-        plan.append(split_week(7, weekly_mileage))
+        plan.append(split_week(7, weekly_mileage[week + 1]))
     if days_last_week == 0:
-        plan.append(split_week(6, weekly_mileage - 26) + [26.2])
+        plan.append(split_week(6, weekly_mileage[-1] - 26) + [26.2])
     elif days_last_week > 1:
-        plan.append(split_week(days_last_week - 1, round((weekly_mileage - 26)
-                    * ((days_last_week - 1) / 7))) + [26.2])
+        total_miles = round(weekly_mileage[-1] * (days_last_week / 7))
+        if total_miles <= 26:
+            plan.append(split_week(days_last_week - 1, 0) + [26.2])
+        else:
+            plan.append(split_week(days_last_week - 1, total_miles - 26)
+                        + [26.2])
     else:
         plan.append([26.2])
     return plan
 
-'''
+def add_taper(plan):
+    print('FIXME: define taper function')
+
 def write_plan(plan, start_date):
-    for i in range
+    text = 'Marathon Training Plan'
+    counter = 0
+    for week_num, week in enumerate(plan):
+        text += '\n\nWeek ' + str(week_num + 1) + ':'
         for day in week:
-'''
-            
+            date_str = '\n' + (start_date + d.timedelta(counter)).strftime(
+                                    '%A, %B %d')
+
+            text += date_str
+            if day == 1:
+                plural = ''
+            else:
+                plural = 's'
+            text += ':' + ' '*(26-len(date_str)) + str(day) + ' mile' + plural
+            counter += 1
+        if sum(week) == 1:
+            plural = ''
+        else:
+            plural = 's'
+        text += '\nTotal:' + ' '*20 + str(sum(week)) + ' mile' + plural
+    with open('training_plan.txt', 'w+') as f:
+        f.write(text)
+
+def email_plan():
+    while True:
+        address = e.enterbox("Please enter your email address: ")
+        if address == None:
+            return False
+        my_address = 'ben.stutzman.unofficial@gmail.com'
+        message = MIMEMultipart()
+        message['From'] = my_address
+        message['To'] = address
+        message['Subject'] = 'Your Marathon Training Plan'
+        body = 'Attached is your training plan.\nHappy training!'
+        message.attach(MIMEText(body, 'plain'))
+        
+        file_name = 'Training_plan.txt'
+        with open(file_name, 'rb') as f:
+            attachment = MIMEBase('application', 'octet-stream')
+            attachment.set_payload(f.read())
+            encoders.encode_base64(attachment)
+            attachment.add_header('Content-Disposition', "attachment; "
+                                  "filename= %s" % file_name)
+            message.attach(attachment)
+        # Source for attaching file to email: naelshiab.com
+
+        try:
+            server = smtplib.SMTP(host = 'smtp.gmail.com', port = 587)
+            server.starttls()
+            server.login(my_address, 'Boa8Constrictor9')
+            message = message.as_string()
+            server.sendmail(my_address, address, message)
+            server.quit()
+            e.msgbox("Message sent!")
+            return True
+        except smtplib.SMTPRecipientsRefused:
+            if not e.ynbox("Sorry, that email address is invalid. "
+                       "Try another address?"):
+                return False
+
+def deliver_plan():
+    if e.ynbox("Your plan has been created! "
+                 "Would you like the file to be emailed to you?"):
+        emailed = email_plan()
+    else:
+        emailed = False
+    if not emailed:
+        e.msgbox("OK, your plan is in the file 'Training_plan.txt'.")
+
+def ask_another():
+    if not e.ynbox("Make another plan?"):
+        raise QuitError
 
 if __name__ == '__main__':
     print("This file contains the functions for "
