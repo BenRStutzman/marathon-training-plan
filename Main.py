@@ -11,12 +11,12 @@ while True:
             start_date, race_date)
         weekly_mileage = f.calc_weekly_mileage(num_weeks, days_first_week,
                                                days_last_week)
-        plan = f.build_plan(days_first_week, days_last_week, num_weeks,
-                            weekly_mileage)
-        plan = f.add_taper(plan, num_days)
+        plan = f.build_plan(num_weeks, weekly_mileage, days_first_week,
+                            days_last_week)
+        plan = f.add_taper(plan, num_days, days_last_week)
         f.write_plan(plan, start_date)
-        f.deliver_plan()
-        f.ask_another()
+        emailed = f.deliver_plan()
+        f.ask_another(emailed)
     except f.QuitError:
         break
 f.e.msgbox("Good luck training!")

@@ -78,7 +78,7 @@ def get_start_date(today, race_date):
 
 def get_mileage(prompt, time_frame, min_mileage):
     while True:
-        answer = e.integerbox(prompt)
+        answer = e.integerbox(prompt, upperbound = 120)
         if answer == None:
             raise QuitError
         elif answer >= min_mileage:
@@ -88,41 +88,55 @@ def get_mileage(prompt, time_frame, min_mileage):
                      % (min_mileage, time_frame))
             
 def calc_weekly_mileage(num_weeks, days_first_week, days_last_week):
-    initial_mileage = get_mileage("Initial miles per week?", "to start", 5)
+    initial_mileage = get_mileage("Initial miles per week?", "to start", 0)
     final_mileage = get_mileage("Final miles per week?", "by the end", 30)
-    if days_first_week:
-        weekly_mileage = [round(initial_mileage * (days_first_week / 7))]
-        num_weeks -= 1
-    else:
-        weekly_mileage = []
-    weekly_mileage += [round(initial_mileage + (i/(num_weeks - 3)) *
-            (final_mileage - initial_mileage)) for i in range(num_weeks - 2)]
-    weekly_mileage += [round(final_mileage * 0.75)]
-    if not days_last_week:
-        days_last_week = 7
+    weekly_mileage = []
+    if num_weeks == 2:
+        weekly_mileage += [round(final_mileage * 0.75 * days_first_week / 7)]
+    elif num_weeks == 3:
+        weekly_mileage += [round(final_mileage * (days_first_week / 7))]
+        weekly_mileage += [round(final_mileage * 0.75)]
+    elif num_weeks == 4:
+        weekly_mileage += [round(initial_mileage * (days_first_week / 7))]
+        weekly_mileage += [final_mileage]
+        weekly_mileage += [round(final_mileage * 0.75)]
+    elif num_weeks > 4:
+        if days_first_week < 7:
+            weekly_mileage += [round(initial_mileage * (days_first_week / 7))]
+            num_weeks -= 1
+        weekly_mileage += [round(initial_mileage + (i/(num_weeks - 3)) *
+                (final_mileage - initial_mileage)) for i in range(
+                 num_weeks - 2)]
+        weekly_mileage += [round(final_mileage * 0.75)]
     weekly_mileage += [round(final_mileage / 2 * ((days_last_week - 1) / 7))]
     return weekly_mileage
 
 def calc_weeks(start_date, race_date):
     race_day = race_date.weekday()
     start_day = start_date.weekday()
-    days_first_week = (7 - start_day) % 7
-    days_last_week = (race_day + 1) % 7
     num_days = (race_date - start_date).days + 1
     if start_date.isocalendar()[:2] == race_date.isocalendar()[:2]:
         days_first_week = num_days
-        days_last_week = 0
-        num_weeks = 0
+        days_last_week = num_days
+        num_weeks = 1
     else:
+        days_first_week = (7 - start_day) % 7
+        days_last_week = (race_day + 1) % 7
         num_weeks = (num_days - days_first_week - days_last_week) // 7
-    if days_first_week:
-        num_weeks += 1
-    if days_last_week:
-        num_weeks += 1
+        if days_first_week:
+            num_weeks += 1
+        else:
+            days_first_week = 7
+        if days_last_week:
+            num_weeks += 1
+        else:
+            days_last_week = 7
     return (days_first_week, days_last_week, num_weeks, num_days)
 
 
 def split_week(days, total_mileage):
+    if days == 0:
+        return []
     proportions = [randint(1,100) for i in range(days)]
     multiplier = total_mileage / sum(proportions)
     mileage = [round(i * multiplier) for i in proportions]
@@ -133,51 +147,44 @@ def split_week(days, total_mileage):
         mileage[0] = 0
     return mileage
 
-def build_plan(days_first_week, days_last_week, num_weeks, weekly_mileage):
+def build_plan(num_weeks, weekly_mileage, days_first_week, days_last_week):
     plan = []
-    if num_weeks == 1:
-        if days_first_week == 1:
-            plan.append([26.2])
-        else:
-            total_miles = round(weekly_mileage[0] * (days_first_week / 7))
-            if total_miles <= 26:
-                plan.append(split_week(days_first_week - 1, 0) + [26.2])
-            else:
-                plan.append(split_week(days_first_week - 1, total_miles - 26)
-                            + [26.2])
-        return plan
-    for week in range(num_weeks - 1):
-        plan.append(split_week(7, weekly_mileage[week]))
-    if days_last_week == 1:
-        plan.append([26.2])
-    else:
-        plan.append(split_week(days_last_week - 1, weekly_mileage[-1]) + [26.2])
+    if num_weeks > 1:
+        plan.append(split_week(days_first_week, weekly_mileage[0])) 
+        for week in range(1, num_weeks - 1):
+            plan.append(split_week(7, weekly_mileage[week]))
+    plan.append(split_week(days_last_week - 1, weekly_mileage[-1]) + [26.2])
     return plan
 
 def calc_long_runs(weekly_mileage, days_first_week, days_last_week):
+    long_runs = []
+    start = 0
+    if days_first_week:
+        start += 1
+    
     pass
     
 
-def add_taper(plan, num_days):
+def add_taper(plan, num_days, days_last_week):
     taper_vals = [5,3,1]
     if num_days >= 2:
-        if len(plan[-1]) >= 2:
+        if  days_last_week >= 2:
             plan[-1][-2] = min(plan[-1][-2], taper_vals[-1])
         else:
             plan[-2][-1] = min(plan[-2][-1], taper_vals[-1])
     if num_days >= 3:
-        if len(plan[-1]) >= 3:
+        if days_last_week >= 3:
             plan[-1][-3] = min(plan[-1][-3], taper_vals[-2])
-        elif len(plan[-1]) == 2:
+        elif days_last_week == 2:
             plan[-2][-1] = min(plan[-2][-1], taper_vals[-2])
         else:
             plan[-2][-2] = min(plan[-2][-2], taper_vals[-2])
     if num_days >= 4:
-        if len(plan[-1]) >= 4:
+        if days_last_week >= 4:
             plan[-1][-4] = min(plan[-1][-4], taper_vals[-3])
-        elif len(plan[-1]) == 3:
+        elif days_last_week == 3:
             plan[-2][-1] = min(plan[-2][-1], taper_vals[-3])
-        elif len(plan[-1]) == 2:
+        elif days_last_week == 2:
             plan[-2][-2] = min(plan[-2][-2], taper_vals[-3])
         else:
             plan[-2][-3] = min(plan[-2][-3], taper_vals[-3])
@@ -237,7 +244,6 @@ def email_plan():
             message = message.as_string()
             server.sendmail(my_address, address, message)
             server.quit()
-            e.msgbox("Message sent!")
             return True
         except smtplib.SMTPRecipientsRefused:
             if not e.ynbox("Sorry, that email address is invalid. "
@@ -250,11 +256,14 @@ def deliver_plan():
         emailed = email_plan()
     else:
         emailed = False
-    if not emailed:
-        e.msgbox("OK, your plan is in the file 'Training_plan.txt'.")
+    return emailed
 
-def ask_another():
-    if not e.ynbox("Make another plan?"):
+def ask_another(emailed):
+    if emailed:
+        addition = "Message sent! "
+    else:
+        addition = "Your plan is in the file 'Training_plan.txt'. "
+    if not e.ynbox(addition + "Make another plan?"):
         raise QuitError
 
 if __name__ == '__main__':
