@@ -98,7 +98,7 @@ def calc_weekly_mileage(num_weeks, days_first_week, days_last_week):
         weekly_mileage += [round(final_mileage * 0.75)]
     elif num_weeks == 4:
         weekly_mileage += [round(initial_mileage * (days_first_week / 7))]
-        weekly_mileage += [final_mileage]
+        weekly_mileage.append(final_mileage)
         weekly_mileage += [round(final_mileage * 0.75)]
     elif num_weeks > 4:
         if days_first_week < 7:
@@ -109,7 +109,7 @@ def calc_weekly_mileage(num_weeks, days_first_week, days_last_week):
                  num_weeks - 2)]
         weekly_mileage += [round(final_mileage * 0.75)]
     weekly_mileage += [round(final_mileage / 2 * ((days_last_week - 1) / 7))]
-    return weekly_mileage
+    return (initial_mileage, weekly_mileage)
 
 def calc_weeks(start_date, race_date):
     race_day = race_date.weekday()
@@ -137,7 +137,8 @@ def calc_weeks(start_date, race_date):
 def split_week(days, total_mileage):
     if days == 0:
         return []
-    proportions = [randint(1,100) for i in range(days)]
+    proportions = [randint(1,100) for i in range(days - 1)]
+    proportions.append(0)
     multiplier = total_mileage / sum(proportions)
     mileage = [round(i * multiplier) for i in proportions]
     diff = total_mileage - sum(mileage)
@@ -156,22 +157,44 @@ def build_plan(num_weeks, weekly_mileage, days_first_week, days_last_week):
     plan.append(split_week(days_last_week - 1, weekly_mileage[-1]) + [26.2])
     return plan
 
-def calc_long_runs(weekly_mileage, days_first_week, days_last_week):
+def calc_long_runs(num_weeks, weekly_mileage, initial_mileage, days_first_week):
+    longest_run = 20
     long_runs = []
-    start = 0
-    if days_first_week:
-        start += 1
-    
-    pass
+    if num_weeks <= 2:
+        return [0 for i in range(num_weeks)]
+    elif num_weeks == 3:
+        if days_first_week <= 2:
+            return [0 for i in range(num_weeks)]
+        else:
+            return [longest_run, 0, 0]
+    elif num_weeks == 4:
+        if days_first_week <= 2:
+            long_runs.append(0)
+        else:
+            long_runs.append(round(weekly_mileage[2]/3))
+        long_runs.append(longest_run)
+        long_runs += [0,0]
+    else:
+        if days_first_week <= 2:
+            long_runs.append(0)
+            num_weeks -= 1
+        first_long_run = round(weekly_mileage[2]/3)
+        long_runs += [round(first_long_run + i / (num_weeks - 3) * (longest_run
+                    - first_long_run)) for i in range(num_weeks - 2)]
+        long_runs += [0,0]
+    return long_runs
+
+def add_long_runs():
+    print('FIXME: add long runs function')
     
 
 def add_taper(plan, num_days, days_last_week):
     taper_vals = [5,3,1]
     if num_days >= 2:
         if  days_last_week >= 2:
-            plan[-1][-2] = min(plan[-1][-2], taper_vals[-1])
+            plan[-1][-2] = taper_vals[-1]
         else:
-            plan[-2][-1] = min(plan[-2][-1], taper_vals[-1])
+            plan[-2][-1] = taper_vals[-1]
     if num_days >= 3:
         if days_last_week >= 3:
             plan[-1][-3] = min(plan[-1][-3], taper_vals[-2])
