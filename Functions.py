@@ -157,7 +157,7 @@ def build_plan(num_weeks, weekly_mileage, days_first_week, days_last_week):
     plan.append(split_week(days_last_week - 1, weekly_mileage[-1]) + [26.2])
     return plan
 
-def calc_long_runs(num_weeks, weekly_mileage, initial_mileage, days_first_week):
+def calc_long_runs(num_weeks, initial_mileage, days_first_week):
     longest_run = 20
     long_runs = []
     if num_weeks <= 2:
@@ -171,22 +171,38 @@ def calc_long_runs(num_weeks, weekly_mileage, initial_mileage, days_first_week):
         if days_first_week <= 2:
             long_runs.append(0)
         else:
-            long_runs.append(round(weekly_mileage[2]/3))
+            long_runs.append(round(initial_mileage/3))
         long_runs.append(longest_run)
         long_runs += [0,0]
     else:
         if days_first_week <= 2:
             long_runs.append(0)
             num_weeks -= 1
-        first_long_run = round(weekly_mileage[2]/3)
+        first_long_run = round(initial_mileage/3)
         long_runs += [round(first_long_run + i / (num_weeks - 3) * (longest_run
                     - first_long_run)) for i in range(num_weeks - 2)]
         long_runs += [0,0]
     return long_runs
 
-def add_long_runs():
-    print('FIXME: add long runs function')
-    
+def insert_long_run(week, week_index, distance):
+    while week[5] < distance:
+        week[5] += 1
+        second_index = week.index(max(week[:5]))
+        week[second_index] -= 1
+    while week[5] > distance:
+        week[5] -= 1
+        second_index = week.index(min(week[:5]))
+        week[second_index] += 1
+    return week
+
+
+def add_long_runs(plan, num_weeks, initial_mileage, days_first_week):
+    long_runs = calc_long_runs(num_weeks, initial_mileage, days_first_week)
+    for week_index, week in enumerate(plan):
+        if long_runs[week_index]:
+            plan[week_index] = insert_long_run(week, week_index,
+                                               long_runs[week_index])
+    return plan
 
 def add_taper(plan, num_days, days_last_week):
     taper_vals = [5,3,1]

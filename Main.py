@@ -13,8 +13,7 @@ while True:
                                                days_last_week)
         plan = f.build_plan(num_weeks, weekly_mileage, days_first_week,
                             days_last_week)
-        long_runs = f.calc_long_runs(num_weeks, weekly_mileage,
-                                     initial_mileage, days_first_week)
+        plan = f.add_long_runs(plan, num_weeks, initial_mileage, days_first_week)
         plan = f.add_taper(plan, num_days, days_last_week)
         f.write_plan(plan, start_date)
         emailed = f.deliver_plan()
