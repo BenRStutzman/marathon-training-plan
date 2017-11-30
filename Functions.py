@@ -87,11 +87,21 @@ def get_mileage(prompt, time_frame, min_mileage):
             e.msgbox("You must run at least %d miles per week %s."
                      % (min_mileage, time_frame))
             
-def calc_weekly_mileage(num_weeks):
+def calc_weekly_mileage(num_weeks, days_first_week, days_last_week):
     initial_mileage = get_mileage("Initial miles per week?", "to start", 5)
     final_mileage = get_mileage("Final miles per week?", "by the end", 30)
-    return [round(initial_mileage + (i/num_weeks) * (final_mileage
-                        -initial_mileage)) for i in range(1, num_weeks + 1)]
+    if days_first_week:
+        weekly_mileage = [round(initial_mileage * (days_first_week / 7))]
+        num_weeks -= 1
+    else:
+        weekly_mileage = []
+    weekly_mileage += [round(initial_mileage + (i/(num_weeks - 3)) *
+            (final_mileage - initial_mileage)) for i in range(num_weeks - 2)]
+    weekly_mileage += [round(final_mileage * 0.75)]
+    if not days_last_week:
+        days_last_week = 7
+    weekly_mileage += [round(final_mileage / 2 * ((days_last_week - 1) / 7))]
+    return weekly_mileage
 
 def calc_weeks(start_date, race_date):
     race_day = race_date.weekday()
@@ -136,48 +146,41 @@ def build_plan(days_first_week, days_last_week, num_weeks, weekly_mileage):
                 plan.append(split_week(days_first_week - 1, total_miles - 26)
                             + [26.2])
         return plan
-    if days_first_week:
-        plan.append(split_week(days_first_week,
-                               round(weekly_mileage[0] * (days_first_week / 7))))
-        num_weeks -= 1
     for week in range(num_weeks - 1):
-        plan.append(split_week(7, weekly_mileage[week + 1]))
-    if days_last_week == 0:
-        plan.append(split_week(6, weekly_mileage[-1] - 26) + [26.2])
-    elif days_last_week > 1:
-        total_miles = round(weekly_mileage[-1] * (days_last_week / 7))
-        if total_miles <= 26:
-            plan.append(split_week(days_last_week - 1, 0) + [26.2])
-        else:
-            plan.append(split_week(days_last_week - 1, total_miles - 26)
-                        + [26.2])
-    else:
+        plan.append(split_week(7, weekly_mileage[week]))
+    if days_last_week == 1:
         plan.append([26.2])
+    else:
+        plan.append(split_week(days_last_week - 1, weekly_mileage[-1]) + [26.2])
     return plan
 
+def calc_long_runs(weekly_mileage, days_first_week, days_last_week):
+    pass
+    
+
 def add_taper(plan, num_days):
-    taper_vals = [7,5,3]
+    taper_vals = [5,3,1]
     if num_days >= 2:
         if len(plan[-1]) >= 2:
-            plan[-1][-2] = taper_vals[-1]
+            plan[-1][-2] = min(plan[-1][-2], taper_vals[-1])
         else:
-            plan[-2][-1] = taper_vals[-1]
+            plan[-2][-1] = min(plan[-2][-1], taper_vals[-1])
     if num_days >= 3:
         if len(plan[-1]) >= 3:
-            plan[-1][-3] = taper_vals[-2]
+            plan[-1][-3] = min(plan[-1][-3], taper_vals[-2])
         elif len(plan[-1]) == 2:
-            plan[-2][-1] = taper_vals[-2]
+            plan[-2][-1] = min(plan[-2][-1], taper_vals[-2])
         else:
-            plan[-2][-2] = taper_vals[-2]
+            plan[-2][-2] = min(plan[-2][-2], taper_vals[-2])
     if num_days >= 4:
         if len(plan[-1]) >= 4:
-            plan[-1][-4] = taper_vals[-3]
+            plan[-1][-4] = min(plan[-1][-4], taper_vals[-3])
         elif len(plan[-1]) == 3:
-            plan[-2][-1] = taper_vals[-3]
+            plan[-2][-1] = min(plan[-2][-1], taper_vals[-3])
         elif len(plan[-1]) == 2:
-            plan[-2][-2] = taper_vals[-3]
+            plan[-2][-2] = min(plan[-2][-2], taper_vals[-3])
         else:
-            plan[-2][-3] = taper_vals[-3]
+            plan[-2][-3] = min(plan[-2][-3], taper_vals[-3])
     return plan
 
 def write_plan(plan, start_date):
