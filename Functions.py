@@ -53,7 +53,6 @@ def get_date(prompt, min_date, max_date):
         raise QuitError
     else:
         day = int(day)
-    
     return d.date(year, month, day)
 
 def get_race_date(today, time_range):
@@ -76,20 +75,34 @@ def get_start_date(today, race_date):
     else:
         raise QuitError
 
-def get_mileage(prompt, time_frame, min_mileage):
+def get_mileage(prompt, min_mileage, max_mileage, qualifier = ''):
+    if min_mileage == 1:
+        plural1 = ''
+    else:
+        plural1 = 's'
+    if max_mileage == 1:
+        plural2 = ''
+    else:
+        plural2 = 's'
     while True:
-        answer = e.integerbox(prompt, upperbound = 120)
+        answer = e.integerbox(prompt, lowerbound = None, upperbound = None)
         if answer == None:
             raise QuitError
-        elif answer >= min_mileage:
-            return answer
+        elif answer < min_mileage:
+            e.msgbox("You must run at least %d mile%s%s."
+                     % (min_mileage, plural1, qualifier))
+        elif answer > max_mileage:
+            e.msgbox("You may only run up to %d mile%s%s."
+                     % (max_mileage, plural2, qualifier))
         else:
-            e.msgbox("You must run at least %d miles per week %s."
-                     % (min_mileage, time_frame))
+            return answer
             
-def calc_weekly_mileage(num_weeks, days_first_week, days_last_week):
-    initial_mileage = get_mileage("Initial miles per week?", "to start", 0)
-    final_mileage = get_mileage("Final miles per week?", "by the end", 30)
+            
+def calc_mileage(num_weeks, days_first_week, days_last_week):
+    initial_mileage = get_mileage("Initial miles per week?", 1, 75,
+                                  " per week to start")
+    final_mileage = get_mileage("Final miles per week?", max(30, initial_mileage)
+                                , 100, " per week at the end")
     weekly_mileage = []
     if num_weeks == 2:
         weekly_mileage += [round(final_mileage * 0.75 * days_first_week / 7)]
@@ -109,9 +122,9 @@ def calc_weekly_mileage(num_weeks, days_first_week, days_last_week):
                  num_weeks - 2)]
         weekly_mileage += [round(final_mileage * 0.75)]
     weekly_mileage += [round(final_mileage / 2 * ((days_last_week - 1) / 7))]
-    return (initial_mileage, weekly_mileage)
+    return (initial_mileage, final_mileage, weekly_mileage)
 
-def calc_weeks(start_date, race_date):
+def calc_schedule(start_date, race_date):
     race_day = race_date.weekday()
     start_day = start_date.weekday()
     num_days = (race_date - start_date).days + 1
@@ -134,10 +147,15 @@ def calc_weeks(start_date, race_date):
     return (days_first_week, days_last_week, num_weeks, num_days)
 
 
-def split_week(days, total_mileage):
+def split_week(days, total_mileage, spread):
     if days == 0:
         return []
     proportions = [randint(1,100) for i in range(days - 1)]
+    for day in range(len(proportions)):
+        while proportions[day] < sum(proportions) / ((days - 1) * spread):
+            proportions[day] += 1
+        while proportions[day] > spread * sum(proportions) / (days - 1):
+            proportions[day] -= 1
     proportions.append(0)
     multiplier = total_mileage / sum(proportions)
     mileage = [round(i * multiplier) for i in proportions]
@@ -150,54 +168,67 @@ def split_week(days, total_mileage):
 
 def build_plan(num_weeks, weekly_mileage, days_first_week, days_last_week):
     plan = []
+    spread = 2
     if num_weeks > 1:
-        plan.append(split_week(days_first_week, weekly_mileage[0])) 
+        plan.append(split_week(days_first_week, weekly_mileage[0], spread)) 
         for week in range(1, num_weeks - 1):
-            plan.append(split_week(7, weekly_mileage[week]))
-    plan.append(split_week(days_last_week - 1, weekly_mileage[-1]) + [26.2])
+            plan.append(split_week(7, weekly_mileage[week], spread))
+    plan.append(split_week(days_last_week - 1, weekly_mileage[-1], spread)
+                + [26.2])
     return plan
 
-def calc_long_runs(num_weeks, initial_mileage, days_first_week):
-    longest_run = 20
+def calc_long_runs(num_weeks, initial_mileage, days_first_week, days_last_week,
+                   longest_run):
     long_runs = []
-    if num_weeks <= 2:
-        return [0 for i in range(num_weeks)]
+    if days_last_week >= 6:
+        last_run = round(longest_run / 2)
+    else:
+        last_run = 0
+    first_long_run = round(initial_mileage/3)
+    if num_weeks == 2:
+        if days_first_week <= 2:
+            long_runs.append(0)
+        else:
+            long_runs.append(last_run)
     elif num_weeks == 3:
         if days_first_week <= 2:
-            return [0 for i in range(num_weeks)]
+            long_runs.append(0)
         else:
-            return [longest_run, 0, 0]
+            long_runs.append(longest_run)
+        long_runs.append(last_run)
     elif num_weeks == 4:
         if days_first_week <= 2:
             long_runs.append(0)
         else:
-            long_runs.append(round(initial_mileage/3))
-        long_runs.append(longest_run)
-        long_runs += [0,0]
-    else:
+            long_runs.append(first_long_run)
+        long_runs += [longest_run, last_run]
+    elif num_weeks > 4:
         if days_first_week <= 2:
             long_runs.append(0)
             num_weeks -= 1
-        first_long_run = round(initial_mileage/3)
         long_runs += [round(first_long_run + i / (num_weeks - 3) * (longest_run
                     - first_long_run)) for i in range(num_weeks - 2)]
-        long_runs += [0,0]
-    return long_runs
+        long_runs.append(last_run)
+    return long_runs + [0]
 
 def insert_long_run(week, week_index, distance):
-    while week[5] < distance:
-        week[5] += 1
-        second_index = week.index(max(week[:5]))
+    while week[-2] < distance:
+        week[-2] += 1
+        second_index = week.index(max(week[:-2]))
         week[second_index] -= 1
-    while week[5] > distance:
-        week[5] -= 1
-        second_index = week.index(min(week[:5]))
+    while week[-2] > distance:
+        week[-2] -= 1
+        second_index = week.index(min(week[:-2]))
         week[second_index] += 1
     return week
 
-
-def add_long_runs(plan, num_weeks, initial_mileage, days_first_week):
-    long_runs = calc_long_runs(num_weeks, initial_mileage, days_first_week)
+def add_long_runs(plan, num_weeks, initial_mileage, final_mileage,
+                  days_first_week, days_last_week):
+    longest_run = get_mileage("How many miles will your longest training "
+                              "run be?", 10, final_mileage * 2/5,
+                              " for your longest run")
+    long_runs = calc_long_runs(num_weeks, initial_mileage, days_first_week,
+                               days_last_week, longest_run)
     for week_index, week in enumerate(plan):
         if long_runs[week_index]:
             plan[week_index] = insert_long_run(week, week_index,
@@ -213,20 +244,20 @@ def add_taper(plan, num_days, days_last_week):
             plan[-2][-1] = taper_vals[-1]
     if num_days >= 3:
         if days_last_week >= 3:
-            plan[-1][-3] = min(plan[-1][-3], taper_vals[-2])
+            plan[-1][-3] = taper_vals[-2]
         elif days_last_week == 2:
-            plan[-2][-1] = min(plan[-2][-1], taper_vals[-2])
+            plan[-2][-1] = taper_vals[-2]
         else:
-            plan[-2][-2] = min(plan[-2][-2], taper_vals[-2])
+            plan[-2][-2] = taper_vals[-2]
     if num_days >= 4:
         if days_last_week >= 4:
-            plan[-1][-4] = min(plan[-1][-4], taper_vals[-3])
+            plan[-1][-4] = taper_vals[-3]
         elif days_last_week == 3:
-            plan[-2][-1] = min(plan[-2][-1], taper_vals[-3])
+            plan[-2][-1] = taper_vals[-3]
         elif days_last_week == 2:
-            plan[-2][-2] = min(plan[-2][-2], taper_vals[-3])
+            plan[-2][-2] = taper_vals[-3]
         else:
-            plan[-2][-3] = min(plan[-2][-3], taper_vals[-3])
+            plan[-2][-3] = taper_vals[-3]
     return plan
 
 def write_plan(plan, start_date):
@@ -274,7 +305,7 @@ def email_plan():
             attachment.add_header('Content-Disposition', "attachment; "
                                   "filename= %s" % file_name)
             message.attach(attachment)
-        # Source for attaching file to email: naelshiab.com
+        # Source for attaching file to email (previous 8 lines): naelshiab.com
 
         try:
             server = smtplib.SMTP(host = 'smtp.gmail.com', port = 587)
