@@ -250,8 +250,8 @@ def insert_long_run(week, week_index, distance):
         week[second_index] += 1
     return week
 
-def add_long_runs(plan, num_weeks, initial_mileage, final_mileage,
-                  days_first_week, days_last_week):
+def add_long_runs(plan, initial_mileage, final_mileage,
+                  num_weeks, days_first_week, days_last_week):
     """ Insert long runs into the plan, maintaining the original mileage per
     week. """
     longest_run = get_mileage("How many miles will your longest training "
