@@ -1,186 +1,176 @@
 Marathon Training Plan
 
 Week 1:
-Monday, December 11:      6 miles
-Tuesday, December 12:     6 miles
-Wednesday, December 13:   3 miles
-Thursday, December 14:    6 miles
-Friday, December 15:      6 miles
-Saturday, December 16:    13 miles
-Sunday, December 17:      0 miles
+Monday, December 18:      5 miles
+Tuesday, December 19:     4 miles
+Wednesday, December 20:   6 miles
+Thursday, December 21:    6 miles
+Friday, December 22:      6 miles
+Saturday, December 23:    13 miles
+Sunday, December 24:      0 miles
 Total:                    40 miles
 
 Week 2:
-Monday, December 18:      6 miles
-Tuesday, December 19:     6 miles
-Wednesday, December 20:   3 miles
-Thursday, December 21:    5 miles
-Friday, December 22:      7 miles
-Saturday, December 23:    14 miles
-Sunday, December 24:      0 miles
+Monday, December 25:      4 miles
+Tuesday, December 26:     4 miles
+Wednesday, December 27:   6 miles
+Thursday, December 28:    6 miles
+Friday, December 29:      7 miles
+Saturday, December 30:    14 miles
+Sunday, December 31:      0 miles
 Total:                    41 miles
 
 Week 3:
-Monday, December 25:      5 miles
-Tuesday, December 26:     6 miles
-Wednesday, December 27:   7 miles
-Thursday, December 28:    5 miles
-Friday, December 29:      5 miles
-Saturday, December 30:    14 miles
-Sunday, December 31:      0 miles
-Total:                    42 miles
+Monday, January 01:       4 miles
+Tuesday, January 02:      7 miles
+Wednesday, January 03:    8 miles
+Thursday, January 04:     4 miles
+Friday, January 05:       6 miles
+Saturday, January 06:     14 miles
+Sunday, January 07:       0 miles
+Total:                    43 miles
 
 Week 4:
-Monday, January 01:       4 miles
-Tuesday, January 02:      8 miles
-Wednesday, January 03:    4 miles
-Thursday, January 04:     5 miles
-Friday, January 05:       8 miles
-Saturday, January 06:     15 miles
-Sunday, January 07:       0 miles
+Monday, January 08:       7 miles
+Tuesday, January 09:      4 miles
+Wednesday, January 10:    7 miles
+Thursday, January 11:     4 miles
+Friday, January 12:       7 miles
+Saturday, January 13:     15 miles
+Sunday, January 14:       0 miles
 Total:                    44 miles
 
 Week 5:
-Monday, January 08:       8 miles
-Tuesday, January 09:      8 miles
-Wednesday, January 10:    6 miles
-Thursday, January 11:     4 miles
-Friday, January 12:       4 miles
-Saturday, January 13:     15 miles
-Sunday, January 14:       0 miles
-Total:                    45 miles
-
-Week 6:
-Monday, January 15:       4 miles
-Tuesday, January 16:      7 miles
-Wednesday, January 17:    4 miles
-Thursday, January 18:     7 miles
+Monday, January 15:       6 miles
+Tuesday, January 16:      4 miles
+Wednesday, January 17:    8 miles
+Thursday, January 18:     4 miles
 Friday, January 19:       8 miles
 Saturday, January 20:     16 miles
 Sunday, January 21:       0 miles
 Total:                    46 miles
 
-Week 7:
-Monday, January 22:       5 miles
-Tuesday, January 23:      7 miles
-Wednesday, January 24:    4 miles
-Thursday, January 25:     8 miles
-Friday, January 26:       8 miles
+Week 6:
+Monday, January 22:       6 miles
+Tuesday, January 23:      6 miles
+Wednesday, January 24:    7 miles
+Thursday, January 25:     7 miles
+Friday, January 26:       5 miles
 Saturday, January 27:     16 miles
 Sunday, January 28:       0 miles
-Total:                    48 miles
+Total:                    47 miles
 
-Week 8:
-Monday, January 29:       6 miles
+Week 7:
+Monday, January 29:       7 miles
 Tuesday, January 30:      6 miles
-Wednesday, January 31:    6 miles
-Thursday, February 01:    7 miles
-Friday, February 02:      7 miles
+Wednesday, January 31:    8 miles
+Thursday, February 01:    5 miles
+Friday, February 02:      6 miles
 Saturday, February 03:    17 miles
 Sunday, February 04:      0 miles
 Total:                    49 miles
 
-Week 9:
+Week 8:
 Monday, February 05:      6 miles
-Tuesday, February 06:     4 miles
+Tuesday, February 06:     7 miles
 Wednesday, February 07:   7 miles
 Thursday, February 08:    7 miles
-Friday, February 09:      8 miles
+Friday, February 09:      5 miles
 Saturday, February 10:    18 miles
 Sunday, February 11:      0 miles
 Total:                    50 miles
 
-Week 10:
-Monday, February 12:      4 miles
+Week 9:
+Monday, February 12:      6 miles
 Tuesday, February 13:     7 miles
-Wednesday, February 14:   6 miles
-Thursday, February 15:    8 miles
-Friday, February 16:      8 miles
+Wednesday, February 14:   7 miles
+Thursday, February 15:    7 miles
+Friday, February 16:      6 miles
 Saturday, February 17:    18 miles
 Sunday, February 18:      0 miles
 Total:                    51 miles
 
-Week 11:
-Monday, February 19:      6 miles
-Tuesday, February 20:     7 miles
-Wednesday, February 21:   8 miles
-Thursday, February 22:    4 miles
-Friday, February 23:      8 miles
+Week 10:
+Monday, February 19:      4 miles
+Tuesday, February 20:     8 miles
+Wednesday, February 21:   5 miles
+Thursday, February 22:    8 miles
+Friday, February 23:      9 miles
 Saturday, February 24:    19 miles
 Sunday, February 25:      0 miles
-Total:                    52 miles
+Total:                    53 miles
 
-Week 12:
-Monday, February 26:      8 miles
-Tuesday, February 27:     4 miles
-Wednesday, February 28:   9 miles
+Week 11:
+Monday, February 26:      7 miles
+Tuesday, February 27:     7 miles
+Wednesday, February 28:   8 miles
 Thursday, March 01:       5 miles
-Friday, March 02:         9 miles
+Friday, March 02:         8 miles
 Saturday, March 03:       19 miles
 Sunday, March 04:         0 miles
 Total:                    54 miles
 
-Week 13:
-Monday, March 05:         7 miles
-Tuesday, March 06:        7 miles
-Wednesday, March 07:      8 miles
-Thursday, March 08:       6 miles
-Friday, March 09:         7 miles
+Week 12:
+Monday, March 05:         6 miles
+Tuesday, March 06:        8 miles
+Wednesday, March 07:      9 miles
+Thursday, March 08:       8 miles
+Friday, March 09:         5 miles
 Saturday, March 10:       20 miles
 Sunday, March 11:         0 miles
-Total:                    55 miles
-
-Week 14:
-Monday, March 12:         7 miles
-Tuesday, March 13:        7 miles
-Wednesday, March 14:      7 miles
-Thursday, March 15:       8 miles
-Friday, March 16:         7 miles
-Saturday, March 17:       20 miles
-Sunday, March 18:         0 miles
 Total:                    56 miles
 
-Week 15:
-Monday, March 19:         4 miles
-Tuesday, March 20:        9 miles
-Wednesday, March 21:      9 miles
-Thursday, March 22:       5 miles
-Friday, March 23:         10 miles
+Week 13:
+Monday, March 12:         9 miles
+Tuesday, March 13:        9 miles
+Wednesday, March 14:      5 miles
+Thursday, March 15:       7 miles
+Friday, March 16:         6 miles
+Saturday, March 17:       21 miles
+Sunday, March 18:         0 miles
+Total:                    57 miles
+
+Week 14:
+Monday, March 19:         8 miles
+Tuesday, March 20:        8 miles
+Wednesday, March 21:      8 miles
+Thursday, March 22:       6 miles
+Friday, March 23:         8 miles
 Saturday, March 24:       21 miles
 Sunday, March 25:         0 miles
-Total:                    58 miles
-
-Week 16:
-Monday, March 26:         5 miles
-Tuesday, March 27:        5 miles
-Wednesday, March 28:      11 miles
-Thursday, March 29:       6 miles
-Friday, March 30:         11 miles
-Saturday, March 31:       21 miles
-Sunday, April 01:         0 miles
 Total:                    59 miles
 
-Week 17:
-Monday, April 02:         7 miles
-Tuesday, April 03:        10 miles
-Wednesday, April 04:      6 miles
-Thursday, April 05:       5 miles
-Friday, April 06:         10 miles
-Saturday, April 07:       22 miles
-Sunday, April 08:         0 miles
+Week 15:
+Monday, March 26:         5 miles
+Tuesday, March 27:        10 miles
+Wednesday, March 28:      6 miles
+Thursday, March 29:       7 miles
+Friday, March 30:         10 miles
+Saturday, March 31:       22 miles
+Sunday, April 01:         0 miles
 Total:                    60 miles
 
-Week 18:
-Monday, April 09:         4 miles
-Tuesday, April 10:        7 miles
-Wednesday, April 11:      10 miles
-Thursday, April 12:       12 miles
+Week 16:
+Monday, April 02:         7 miles
+Tuesday, April 03:        7 miles
+Wednesday, April 04:      6 miles
+Thursday, April 05:       7 miles
+Friday, April 06:         7 miles
+Saturday, April 07:       11 miles
+Sunday, April 08:         0 miles
+Total:                    45 miles
+
+Week 17:
+Monday, April 09:         8 miles
+Tuesday, April 10:        3 miles
+Wednesday, April 11:      3 miles
+Thursday, April 12:       7 miles
 Friday, April 13:         5 miles
 Saturday, April 14:       3 miles
 Sunday, April 15:         1 mile
-Total:                    42 miles
+Total:                    30 miles
 
-Week 19:
+Week 18:
 Monday, April 16:         26.2 miles
 Total:                    26.2 miles
 

@@ -146,23 +146,29 @@ def calc_mileage(num_weeks, days_first_week, days_last_week):
                                 , 100, " per week at the end")
     weekly_mileage = []
     if num_weeks == 2:
-        weekly_mileage += [round(final_mileage * 0.75 * days_first_week / 7)]
+        weekly_mileage += [round(final_mileage * 0.5 * days_first_week / 7)]
     elif num_weeks == 3:
         weekly_mileage += [round(final_mileage * (days_first_week / 7))]
-        weekly_mileage += [round(final_mileage * 0.75)]
+        weekly_mileage += [round(final_mileage * 0.5)]
     elif num_weeks == 4:
         weekly_mileage += [round(initial_mileage * (days_first_week / 7))]
         weekly_mileage.append(final_mileage)
+        weekly_mileage += [round(final_mileage * 0.5)]
+    elif num_weeks == 5:
+        weekly_mileage += [round(initial_mileage * (days_first_week / 7))]
+        weekly_mileage.append(final_mileage)
         weekly_mileage += [round(final_mileage * 0.75)]
-    elif num_weeks > 4:
+        weekly_mileage += [round(final_mileage * 0.5)]
+    elif num_weeks > 5:
         if days_first_week < 7:
             weekly_mileage += [round(initial_mileage * (days_first_week / 7))]
             num_weeks -= 1
-        weekly_mileage += [round(initial_mileage + (i/(num_weeks - 3)) *
+        weekly_mileage += [round(initial_mileage + (i/(num_weeks - 4)) *
                 (final_mileage - initial_mileage)) for i in range(
-                 num_weeks - 2)]
+                 num_weeks - 3)]
         weekly_mileage += [round(final_mileage * 0.75)]
-    weekly_mileage += [round(final_mileage / 2 * ((days_last_week - 1) / 7))]
+        weekly_mileage += [round(final_mileage * 0.5)]
+    weekly_mileage += [round(final_mileage * 0.5 * ((days_last_week - 1) / 7))]
     return (initial_mileage, final_mileage, weekly_mileage)
 
 def split_week(days, total_mileage, spread):
@@ -192,7 +198,7 @@ def build_plan(num_weeks, weekly_mileage, days_first_week, days_last_week):
     """ Create a training plan that tells the user how many miles to run each
     day from the start date to the race date. """
     plan = []
-    spread = 2
+    spread = 1.75
     if num_weeks > 1:
         plan.append(split_week(days_first_week, weekly_mileage[0], spread)) 
         for week in range(1, num_weeks - 1):
@@ -210,7 +216,7 @@ def calc_long_runs(num_weeks, initial_mileage, days_first_week, days_last_week,
         last_run = round(longest_run / 2)
     else:
         last_run = 0
-    first_long_run = min(round(initial_mileage/3), longest_run)
+    first_long_run = min(round(initial_mileage / 3), longest_run)
     if num_weeks == 2:
         if days_first_week <= 5:
             long_runs.append(0)
@@ -228,13 +234,19 @@ def calc_long_runs(num_weeks, initial_mileage, days_first_week, days_last_week,
         else:
             long_runs.append(first_long_run)
         long_runs += [longest_run, last_run]
-    elif num_weeks > 4:
+    elif num_weeks == 5:
+        if days_first_week <= 5:
+            long_runs.append(0)
+        else:
+            long_runs.append(first_long_run)
+        long_runs += [longest_run, round(longest_run * 0.5), last_run]
+    elif num_weeks > 5:
         if days_first_week <= 5:
             long_runs.append(0)
             num_weeks -= 1
-        long_runs += [round(first_long_run + i / (num_weeks - 3) * (longest_run
-                    - first_long_run)) for i in range(num_weeks - 2)]
-        long_runs.append(last_run)
+        long_runs += [round(first_long_run + i / (num_weeks - 4) * (longest_run
+                    - first_long_run)) for i in range(num_weeks - 3)]
+        long_runs += [round(longest_run * 0.5), last_run]
     return long_runs + [0]
 
 def insert_long_run(week, week_index, distance):

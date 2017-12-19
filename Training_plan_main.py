@@ -10,7 +10,6 @@ It saves this plan to a text file and offers to email it to the user.
 
 try:
     import Training_plan_functions as f
-
     f.welcome()
     # Repeats until user quits, allowing the generation of multiple plans
     while True:
@@ -43,5 +42,6 @@ try:
             break
     f.e.msgbox("Good luck training!")
 except ImportError:
+    # Raised if the user doesn't have easygui installed
     print("Sorry, you must have easygui installed to use this generator."
           "\nGood luck training!")
