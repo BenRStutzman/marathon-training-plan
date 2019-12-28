@@ -1,7 +1,7 @@
 # Marathon-training-plan-generator
 Creates a simple training plan for someone wishing to run a marathon.
 
-![alt text](https://raw.githubusercontent.com/BenRStutzman/marathon-training-plan/master/example.png)
+![alt text](https://raw.githubusercontent.com/BenRStutzman/marathon-training-plan/master/example1.png)
 
 Just download the two Python files, and run "Training_plan_main".  
   
