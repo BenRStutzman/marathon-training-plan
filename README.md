@@ -1,4 +1,4 @@
-# Marathon-training-plan-generator
+# Marathon Training Plan Generator
 Creates a simple training plan for someone wishing to run a marathon.
 
 ![alt text](https://raw.githubusercontent.com/BenRStutzman/marathon-training-plan/master/example1.png)
